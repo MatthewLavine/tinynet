@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './App.css';
+import PerceptronVisualizer from './components/PerceptronVisualizer';
 
 function App() {
   const [learningRate, setLearningRate] = useState(0.01);
@@ -51,16 +52,7 @@ function App() {
 
         {/* Center: Main Visualization Canvas */}
         <section className="canvas-container glass-panel">
-          <div className="canvas-placeholder">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-            </svg>
-            <p>Neural Network Visualization Canvas</p>
-            <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-              (Step 2 & 3 will build the interactive network here)
-            </span>
-          </div>
+          <PerceptronVisualizer />
         </section>
 
         {/* Right Sidebar: Inspector & Loss Data */}
