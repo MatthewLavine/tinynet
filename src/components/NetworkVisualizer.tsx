@@ -60,13 +60,24 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
   
   const trainLoop = () => {
     // Execute multiple steps per frame to speed it up visually
+    let currentLoss = 0;
     for (let i = 0; i < 5; i++) {
-      network.forward(inputs);
+      const { activations } = network.forward(inputs);
+      const output = activations[activations.length - 1][0];
+      currentLoss = meanSquaredError([output], [target]);
+
       network.resetGradients();
       network.backward([target]);
       network.updateWeights(learningRate);
     }
     setEpoch(e => e + 5);
+
+    // Early stopping for Step 6: Stop when it hits a very low error
+    if (currentLoss < 0.001) {
+      setIsTraining(false);
+      return;
+    }
+
     requestRef.current = requestAnimationFrame(trainLoop);
   };
 
