@@ -2,11 +2,12 @@ import { useState } from 'react';
 import './App.css';
 import PerceptronVisualizer from './components/PerceptronVisualizer';
 import NetworkVisualizer from './components/NetworkVisualizer';
+import DatasetVisualizer from './components/DatasetVisualizer';
 
 function App() {
-  const [learningRate, setLearningRate] = useState(0.05); // slightly higher default
+  const [learningRate, setLearningRate] = useState(0.05);
   const [epochs, setEpochs] = useState(0);
-  const [currentStep, setCurrentStep] = useState(6); // Default to latest step
+  const [currentStep, setCurrentStep] = useState(7); // Default to latest step
   const [currentLoss, setCurrentLoss] = useState(0);
 
   const getButtonStyle = (step: number, colors: [string, string]) => ({
@@ -31,6 +32,7 @@ function App() {
            <button style={getButtonStyle(4, ['#ff4444', '#ff0077'])} onClick={() => setCurrentStep(4)}>Step 4: Loss</button>
            <button style={getButtonStyle(5, ['#facc15', '#ff8c00'])} onClick={() => setCurrentStep(5)}>Step 5: Backprop</button>
            <button style={getButtonStyle(6, ['var(--accent-primary)', 'var(--accent-secondary)'])} onClick={() => setCurrentStep(6)}>Step 6: Learn</button>
+           <button style={getButtonStyle(7, ['#00ffaa', '#00aaee'])} onClick={() => setCurrentStep(7)}>Step 7: Problem</button>
         </div>
       </header>
 
@@ -38,9 +40,19 @@ function App() {
         <aside className="sidebar glass-panel">
           <h2 className="panel-title">Network Architecture</h2>
           <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.6' }}>
-            <p><strong>Input Layer:</strong> 2 Neurons</p>
-            <p><strong>Hidden Layers:</strong> [4, 4]</p>
-            <p><strong>Output Layer:</strong> 1 Neuron</p>
+            {currentStep < 7 ? (
+              <>
+                <p><strong>Input Layer:</strong> 2 Neurons</p>
+                <p><strong>Hidden Layers:</strong> [4, 4]</p>
+                <p><strong>Output Layer:</strong> 1 Neuron</p>
+              </>
+            ) : (
+              <>
+                <p><strong>Input Layer:</strong> 2 (X, Y coords)</p>
+                <p><strong>Hidden Layers:</strong> [8, 8]</p>
+                <p><strong>Output Layer:</strong> 1 (Probability)</p>
+              </>
+            )}
           </div>
 
           <div style={{ marginTop: '32px' }}>
@@ -63,7 +75,8 @@ function App() {
 
         <section className="canvas-container glass-panel">
           {currentStep === 2 && <PerceptronVisualizer />}
-          {currentStep >= 3 && <NetworkVisualizer step={currentStep} learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
+          {currentStep >= 3 && currentStep <= 6 && <NetworkVisualizer step={currentStep} learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
+          {currentStep === 7 && <DatasetVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
         </section>
 
         <aside className="inspector-panel glass-panel">
@@ -71,7 +84,7 @@ function App() {
           <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
             <p style={{ marginBottom: '16px' }}>View real-time network states here.</p>
             <div style={{ padding: '16px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
-              <p>Observe the Network adjust its weights to minimize the Error (Loss) in Step 6.</p>
+              <p>In Step 7, the network tries to completely separate the Cyan dots from the Purple dots by bending the space between them.</p>
             </div>
           </div>
 

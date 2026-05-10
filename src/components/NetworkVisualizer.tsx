@@ -56,7 +56,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
   };
 
   // Auto training loop
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(0);
   
   const trainLoop = () => {
     // Execute multiple steps per frame to speed it up visually
