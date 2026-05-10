@@ -6,8 +6,17 @@ import NetworkVisualizer from './components/NetworkVisualizer';
 function App() {
   const [learningRate, setLearningRate] = useState(0.01);
   const [epochs, setEpochs] = useState(0);
-  const [currentStep, setCurrentStep] = useState(4); // Default to latest step
+  const [currentStep, setCurrentStep] = useState(5); // Default to latest step
   const [currentLoss, setCurrentLoss] = useState(0);
+
+  const getButtonStyle = (step: number, colors: [string, string]) => ({
+    background: currentStep === step ? `linear-gradient(135deg, ${colors[0]}, ${colors[1]})` : 'rgba(255,255,255,0.05)',
+    color: currentStep === step ? '#000' : '#fff',
+    border: '1px solid rgba(255,255,255,0.1)',
+    padding: '6px 12px',
+    fontSize: '13px',
+    fontWeight: 'bold' as const
+  });
 
   return (
     <div className="app-container">
@@ -17,30 +26,10 @@ function App() {
           <h1 className="logo-text">TinyNet Studio</h1>
         </div>
         <div className="header-controls">
-           <button 
-             className="btn-primary" 
-             style={{ 
-               background: currentStep === 2 ? 'linear-gradient(135deg, var(--accent-primary), #0077ff)' : 'rgba(255,255,255,0.05)', 
-               color: currentStep === 2 ? '#000' : '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 16px', fontSize: '14px'
-             }}
-             onClick={() => setCurrentStep(2)}
-           >Step 2: Neuron</button>
-           <button 
-             className="btn-primary" 
-             style={{ 
-               background: currentStep === 3 ? 'linear-gradient(135deg, var(--accent-primary), #0077ff)' : 'rgba(255,255,255,0.05)', 
-               color: currentStep === 3 ? '#000' : '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 16px', fontSize: '14px'
-             }}
-             onClick={() => setCurrentStep(3)}
-           >Step 3: Network</button>
-           <button 
-             className="btn-primary" 
-             style={{ 
-               background: currentStep === 4 ? 'linear-gradient(135deg, #ff4444, #ff0077)' : 'rgba(255,255,255,0.05)', 
-               color: currentStep === 4 ? '#fff' : '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '6px 16px', fontSize: '14px'
-             }}
-             onClick={() => setCurrentStep(4)}
-           >Step 4: Loss</button>
+           <button style={getButtonStyle(2, ['var(--accent-primary)', '#0077ff'])} onClick={() => setCurrentStep(2)}>Step 2: Neuron</button>
+           <button style={getButtonStyle(3, ['var(--accent-primary)', '#0077ff'])} onClick={() => setCurrentStep(3)}>Step 3: Network</button>
+           <button style={getButtonStyle(4, ['#ff4444', '#ff0077'])} onClick={() => setCurrentStep(4)}>Step 4: Loss</button>
+           <button style={getButtonStyle(5, ['#facc15', '#ff8c00'])} onClick={() => setCurrentStep(5)}>Step 5: Backprop</button>
         </div>
       </header>
 
@@ -81,7 +70,7 @@ function App() {
           <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
             <p style={{ marginBottom: '16px' }}>View real-time network states here.</p>
             <div style={{ padding: '16px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
-              <p>Select components in Step 5+ to inspect.</p>
+              <p>Select components in Step 6+ to inspect detailed weights.</p>
             </div>
           </div>
 
