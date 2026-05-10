@@ -3,12 +3,14 @@ import './App.css';
 import PerceptronVisualizer from './components/PerceptronVisualizer';
 import NetworkVisualizer from './components/NetworkVisualizer';
 import DatasetVisualizer from './components/DatasetVisualizer';
+import CapacityVisualizer from './components/CapacityVisualizer';
 
 function App() {
   const [learningRate, setLearningRate] = useState(0.05);
   const [epochs, setEpochs] = useState(0);
-  const [currentStep, setCurrentStep] = useState(7); // Default to latest step
+  const [currentStep, setCurrentStep] = useState(8); // Default to latest step
   const [currentLoss, setCurrentLoss] = useState(0);
+  const [dynamicArch, setDynamicArch] = useState<number[]>([2, 8, 8, 1]);
 
   const getButtonStyle = (step: number, colors: [string, string]) => ({
     background: currentStep === step ? `linear-gradient(135deg, ${colors[0]}, ${colors[1]})` : 'rgba(255,255,255,0.05)',
@@ -33,6 +35,7 @@ function App() {
            <button style={getButtonStyle(5, ['#facc15', '#ff8c00'])} onClick={() => setCurrentStep(5)}>Step 5: Backprop</button>
            <button style={getButtonStyle(6, ['var(--accent-primary)', 'var(--accent-secondary)'])} onClick={() => setCurrentStep(6)}>Step 6: Learn</button>
            <button style={getButtonStyle(7, ['#00ffaa', '#00aaee'])} onClick={() => setCurrentStep(7)}>Step 7: Problem</button>
+           <button style={getButtonStyle(8, ['#ff00ff', '#aa00ff'])} onClick={() => setCurrentStep(8)}>Step 8: Capacity</button>
         </div>
       </header>
 
@@ -46,10 +49,16 @@ function App() {
                 <p><strong>Hidden Layers:</strong> [4, 4]</p>
                 <p><strong>Output Layer:</strong> 1 Neuron</p>
               </>
-            ) : (
+            ) : currentStep === 7 ? (
               <>
                 <p><strong>Input Layer:</strong> 2 (X, Y coords)</p>
                 <p><strong>Hidden Layers:</strong> [8, 8]</p>
+                <p><strong>Output Layer:</strong> 1 (Probability)</p>
+              </>
+            ) : (
+              <>
+                <p><strong>Input Layer:</strong> 2 (X, Y coords)</p>
+                <p><strong>Hidden Layers:</strong> {dynamicArch.length > 2 ? `[${dynamicArch.slice(1, -1).join(', ')}]` : "None"}</p>
                 <p><strong>Output Layer:</strong> 1 (Probability)</p>
               </>
             )}
@@ -77,6 +86,7 @@ function App() {
           {currentStep === 2 && <PerceptronVisualizer />}
           {currentStep >= 3 && currentStep <= 6 && <NetworkVisualizer step={currentStep} learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
           {currentStep === 7 && <DatasetVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
+          {currentStep === 8 && <CapacityVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} onArchChange={setDynamicArch} />}
         </section>
 
         <aside className="inspector-panel glass-panel">
@@ -84,7 +94,13 @@ function App() {
           <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
             <p style={{ marginBottom: '16px' }}>View real-time network states here.</p>
             <div style={{ padding: '16px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
-              <p>In Step 7, the network tries to completely separate the Cyan dots from the Purple dots by bending the space between them.</p>
+              {currentStep === 8 ? (
+                <p>Watch how a network with no hidden layers gets permanently stuck trying to separate a circle with a single straight line!</p>
+              ) : currentStep === 7 ? (
+                <p>In Step 7, the network tries to completely separate the Cyan dots from the Purple dots by bending the space between them.</p>
+              ) : (
+                <p>Observe the Network adjust its weights to minimize the Error (Loss) in Step 6.</p>
+              )}
             </div>
           </div>
 
