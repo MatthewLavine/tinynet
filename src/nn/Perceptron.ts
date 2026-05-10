@@ -58,7 +58,15 @@ export class Perceptron {
     }
   }
 
-  // Clear gradients after weights are updated (for Step 6)
+  // Step 6: Gradient Descent - Update weights to minimize error
+  updateWeights(learningRate: number) {
+    this.bias -= learningRate * this.biasGradient;
+    for (let i = 0; i < this.weights.length; i++) {
+      this.weights[i] -= learningRate * this.weightGradients[i];
+    }
+  }
+
+  // Clear gradients after weights are updated
   resetGradients() {
     this.biasGradient = 0;
     this.weightGradients.fill(0);

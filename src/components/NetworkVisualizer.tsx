@@ -1,21 +1,24 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Network } from '../nn/Network';
 import { meanSquaredError } from '../nn/Loss';
 
 interface Props {
   step: number;
+  learningRate: number;
   onLossChange?: (loss: number) => void;
+  onEpochChange?: (epoch: number) => void;
 }
 
-export default function NetworkVisualizer({ step, onLossChange }: Props) {
+export default function NetworkVisualizer({ step, learningRate, onLossChange, onEpochChange }: Props) {
   const architecture = [2, 4, 4, 1];
   const network = useMemo(() => new Network(architecture), []);
   
   const [inputs, setInputs] = useState<number[]>([0.8, 0.2]);
   const [target, setTarget] = useState<number>(1.0);
   
-  // Step 5 state
   const [showGradients, setShowGradients] = useState(false);
+  const [epoch, setEpoch] = useState(0);
+  const [isTraining, setIsTraining] = useState(false);
   const [, setForceRender] = useState(0);
 
   // Run Forward Pass
@@ -27,18 +30,56 @@ export default function NetworkVisualizer({ step, onLossChange }: Props) {
     if (onLossChange) onLossChange(loss);
   }, [loss, onLossChange]);
 
-  // Hide gradients if inputs change, since they are stale
+  useEffect(() => {
+    if (onEpochChange) onEpochChange(epoch);
+  }, [epoch, onEpochChange]);
+
   useEffect(() => {
     setShowGradients(false);
   }, [inputs, target]);
 
-  // Trigger Backward Pass
   const handleBackprop = () => {
     network.resetGradients();
     network.backward([target]);
     setShowGradients(true);
-    setForceRender(prev => prev + 1); // trigger re-render to show new gradients
+    setForceRender(prev => prev + 1);
   };
+
+  const handleStep = () => {
+    // A full learning step: Forward (done), Backward, Update
+    network.resetGradients();
+    network.backward([target]);
+    network.updateWeights(learningRate);
+    
+    setShowGradients(false);
+    setEpoch(e => e + 1);
+  };
+
+  // Auto training loop
+  const requestRef = useRef<number>();
+  
+  const trainLoop = () => {
+    // Execute multiple steps per frame to speed it up visually
+    for (let i = 0; i < 5; i++) {
+      network.forward(inputs);
+      network.resetGradients();
+      network.backward([target]);
+      network.updateWeights(learningRate);
+    }
+    setEpoch(e => e + 5);
+    requestRef.current = requestAnimationFrame(trainLoop);
+  };
+
+  useEffect(() => {
+    if (isTraining) {
+      requestRef.current = requestAnimationFrame(trainLoop);
+    } else if (requestRef.current) {
+      cancelAnimationFrame(requestRef.current);
+    }
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, [isTraining, inputs, target, learningRate, network]);
 
   const layerWidth = 800; 
   const layerHeight = 400; 
@@ -56,7 +97,6 @@ export default function NetworkVisualizer({ step, onLossChange }: Props) {
     
     for (let i = 0; i < layerSize; i++) {
       const y = (i + 1) * ySpacing;
-      // Fetch error signal if it's a processing layer (idx > 0)
       let errSig = 0;
       if (layerIdx > 0 && showGradients) {
         errSig = network.layers[layerIdx - 1].neurons[i].lastErrorSignal;
@@ -73,18 +113,20 @@ export default function NetworkVisualizer({ step, onLossChange }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '24px', padding: '16px' }}>
-      <h2 style={{ color: step >= 5 ? '#facc15' : (step >= 4 ? '#ff4444' : 'var(--accent-primary)'), marginBottom: '-8px', transition: 'color 0.3s ease' }}>
+      <h2 style={{ color: step >= 6 ? '#00f0ff' : (step >= 5 ? '#facc15' : (step >= 4 ? '#ff4444' : 'var(--accent-primary)')), marginBottom: '-8px', transition: 'color 0.3s ease' }}>
         {step === 3 && "Forward Propagation"}
         {step === 4 && "The Loss Function (Error)"}
-        {step >= 5 && "Backpropagation (Gradients)"}
+        {step === 5 && "Backpropagation (Gradients)"}
+        {step >= 6 && "Gradient Descent (Learning)"}
       </h2>
       <p style={{ color: 'var(--text-secondary)', textAlign: 'center', maxWidth: '600px', minHeight: '40px' }}>
         {step === 3 && "Adjust the inputs below. The network performs calculations to feed the signal forward."}
         {step === 4 && "The Target is introduced. The Loss function measures how wrong the Network is."}
-        {step >= 5 && "Click Backpropagate to push the Error backward through the network to see which connections need to be changed."}
+        {step === 5 && "Click Backpropagate to push the Error backward through the network to see which connections need to be changed."}
+        {step >= 6 && "Now we use those gradients to Update the Weights! Click 'Train' to loop the Forward->Backward->Update process and watch it learn."}
       </p>
 
-      {/* Input Controls & Backprop Action */}
+      {/* Input Controls & Actions */}
       <div style={{ display: 'flex', gap: '32px', marginBottom: '8px', alignItems: 'flex-end', flexWrap: 'wrap', justifyContent: 'center' }}>
         <div style={{ display: 'flex', gap: '24px', background: 'rgba(0,0,0,0.2)', padding: '12px 24px', borderRadius: '12px' }}>
           {inputs.map((val, idx) => (
@@ -118,7 +160,7 @@ export default function NetworkVisualizer({ step, onLossChange }: Props) {
           </div>
         )}
 
-        {step >= 5 && (
+        {step === 5 && (
           <button 
             className="btn-primary" 
             style={{ padding: '16px 24px', background: 'linear-gradient(135deg, #facc15, #ff8c00)', color: '#000', fontSize: '16px', fontWeight: 'bold', border: 'none', borderRadius: '12px', boxShadow: '0 0 20px rgba(250, 204, 21, 0.4)' }}
@@ -126,6 +168,26 @@ export default function NetworkVisualizer({ step, onLossChange }: Props) {
           >
             Trigger Backpropagation
           </button>
+        )}
+
+        {step >= 6 && (
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button 
+              className="btn-primary" 
+              style={{ padding: '12px 24px', background: 'linear-gradient(135deg, var(--accent-primary), #0077ff)', color: '#000', fontSize: '14px', fontWeight: 'bold', border: 'none', borderRadius: '12px' }}
+              onClick={handleStep}
+              disabled={isTraining}
+            >
+              Take 1 Step
+            </button>
+            <button 
+              className="btn-primary" 
+              style={{ padding: '12px 24px', background: isTraining ? 'rgba(255,68,68,0.2)' : 'linear-gradient(135deg, var(--accent-secondary), #8b00ff)', color: isTraining ? '#ff4444' : '#fff', fontSize: '14px', fontWeight: 'bold', border: isTraining ? '1px solid #ff4444' : 'none', borderRadius: '12px' }}
+              onClick={() => setIsTraining(!isTraining)}
+            >
+              {isTraining ? 'Stop Training' : 'Train (Auto)'}
+            </button>
+          </div>
         )}
       </div>
 
@@ -145,14 +207,12 @@ export default function NetworkVisualizer({ step, onLossChange }: Props) {
                 const sourceNode = nodePositions[prevLayerIdx][wIdx];
                 const color = weight > 0 ? "var(--accent-primary)" : "var(--accent-secondary)";
                 
-                // If showing gradients, color lines intensely based on the gradient (yellow for pos, red for neg)
                 let strokeColor = color;
                 let opacity = Math.min(1, Math.abs(weight) * 0.5 + 0.1);
                 let strokeWidth = 1 + Math.abs(sourceNode.activation * weight) * 3;
 
                 if (showGradients) {
                    const grad = neuron.weightGradients[wIdx];
-                   // Huge gradients should look very thick and glowy
                    strokeColor = grad > 0 ? '#ff8c00' : '#facc15';
                    opacity = Math.min(1, Math.abs(grad) * 10 + 0.2);
                    strokeWidth = 2 + Math.abs(grad) * 20;
@@ -166,7 +226,7 @@ export default function NetworkVisualizer({ step, onLossChange }: Props) {
                     stroke={strokeColor}
                     strokeWidth={strokeWidth}
                     opacity={opacity}
-                    style={{ transition: 'all 0.5s ease' }}
+                    style={{ transition: isTraining ? 'none' : 'all 0.3s ease' }}
                   />
                 );
               });
@@ -211,7 +271,7 @@ export default function NetworkVisualizer({ step, onLossChange }: Props) {
                   fontSize: '10px', fontWeight: 'bold', color: node.activation > 0.5 ? '#000' : '#fff',
                   boxShadow: showGradients && !isInput ? `0 0 20px ${node.errorSignal > 0 ? '#ff8c00' : '#facc15'}` : `0 0 ${node.activation * 15}px rgba(${baseColor}, ${node.activation})`,
                   zIndex: 10,
-                  transition: 'all 0.5s ease'
+                  transition: isTraining ? 'none' : 'all 0.3s ease'
                 }}
               >
                 {node.activation.toFixed(2)}

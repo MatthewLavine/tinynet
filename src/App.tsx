@@ -4,9 +4,9 @@ import PerceptronVisualizer from './components/PerceptronVisualizer';
 import NetworkVisualizer from './components/NetworkVisualizer';
 
 function App() {
-  const [learningRate, setLearningRate] = useState(0.01);
+  const [learningRate, setLearningRate] = useState(0.05); // slightly higher default
   const [epochs, setEpochs] = useState(0);
-  const [currentStep, setCurrentStep] = useState(5); // Default to latest step
+  const [currentStep, setCurrentStep] = useState(6); // Default to latest step
   const [currentLoss, setCurrentLoss] = useState(0);
 
   const getButtonStyle = (step: number, colors: [string, string]) => ({
@@ -30,6 +30,7 @@ function App() {
            <button style={getButtonStyle(3, ['var(--accent-primary)', '#0077ff'])} onClick={() => setCurrentStep(3)}>Step 3: Network</button>
            <button style={getButtonStyle(4, ['#ff4444', '#ff0077'])} onClick={() => setCurrentStep(4)}>Step 4: Loss</button>
            <button style={getButtonStyle(5, ['#facc15', '#ff8c00'])} onClick={() => setCurrentStep(5)}>Step 5: Backprop</button>
+           <button style={getButtonStyle(6, ['var(--accent-primary)', 'var(--accent-secondary)'])} onClick={() => setCurrentStep(6)}>Step 6: Learn</button>
         </div>
       </header>
 
@@ -51,7 +52,7 @@ function App() {
                   <span>{learningRate}</span>
                 </label>
                 <input 
-                  type="range" min="0.001" max="0.1" step="0.001" 
+                  type="range" min="0.001" max="0.5" step="0.001" 
                   value={learningRate} onChange={(e) => setLearningRate(parseFloat(e.target.value))}
                   style={{ width: '100%', accentColor: 'var(--accent-primary)' }}
                 />
@@ -62,7 +63,7 @@ function App() {
 
         <section className="canvas-container glass-panel">
           {currentStep === 2 && <PerceptronVisualizer />}
-          {currentStep >= 3 && <NetworkVisualizer step={currentStep} onLossChange={setCurrentLoss} />}
+          {currentStep >= 3 && <NetworkVisualizer step={currentStep} learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
         </section>
 
         <aside className="inspector-panel glass-panel">
@@ -70,7 +71,7 @@ function App() {
           <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
             <p style={{ marginBottom: '16px' }}>View real-time network states here.</p>
             <div style={{ padding: '16px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
-              <p>Select components in Step 6+ to inspect detailed weights.</p>
+              <p>Observe the Network adjust its weights to minimize the Error (Loss) in Step 6.</p>
             </div>
           </div>
 
