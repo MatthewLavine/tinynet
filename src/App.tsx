@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import './App.css';
 import PerceptronVisualizer from './components/PerceptronVisualizer';
+import NetworkVisualizer from './components/NetworkVisualizer';
 
 function App() {
   const [learningRate, setLearningRate] = useState(0.01);
   const [epochs, setEpochs] = useState(0);
+  const [currentStep, setCurrentStep] = useState(3);
 
   return (
     <div className="app-container">
@@ -14,7 +16,24 @@ function App() {
           <h1 className="logo-text">TinyNet Studio</h1>
         </div>
         <div className="header-controls">
-          <button className="btn-primary">Play / Train</button>
+           <button 
+             className="btn-primary" 
+             style={{ 
+               background: currentStep === 2 ? 'linear-gradient(135deg, var(--accent-primary), #0077ff)' : 'rgba(255,255,255,0.05)', 
+               color: currentStep === 2 ? '#000' : '#fff',
+               border: '1px solid rgba(255,255,255,0.1)' 
+             }}
+             onClick={() => setCurrentStep(2)}
+           >Step 2: Neuron</button>
+           <button 
+             className="btn-primary" 
+             style={{ 
+               background: currentStep === 3 ? 'linear-gradient(135deg, var(--accent-primary), #0077ff)' : 'rgba(255,255,255,0.05)', 
+               color: currentStep === 3 ? '#000' : '#fff',
+               border: '1px solid rgba(255,255,255,0.1)' 
+             }}
+             onClick={() => setCurrentStep(3)}
+           >Step 3: Network</button>
         </div>
       </header>
 
@@ -52,7 +71,8 @@ function App() {
 
         {/* Center: Main Visualization Canvas */}
         <section className="canvas-container glass-panel">
-          <PerceptronVisualizer />
+          {currentStep === 2 && <PerceptronVisualizer />}
+          {currentStep === 3 && <NetworkVisualizer />}
         </section>
 
         {/* Right Sidebar: Inspector & Loss Data */}
