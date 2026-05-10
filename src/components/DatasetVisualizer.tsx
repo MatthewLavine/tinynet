@@ -114,6 +114,12 @@ export default function DatasetVisualizer({ learningRate, onLossChange, onEpochC
     
     drawBoundary();
 
+    // Early stopping: If the network solves the problem (Loss gets very low), stop training!
+    if (currentLoss < 0.01) {
+      setIsTraining(false);
+      return; // Break the loop
+    }
+
     requestRef.current = requestAnimationFrame(trainLoop);
   };
 
