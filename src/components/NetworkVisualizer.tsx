@@ -296,7 +296,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
             </div>
             
             <div style={{
-              position: 'absolute', left: `${layerWidth - 120}px`, top: `${layerHeight / 2 - 40}px`,
+              position: 'absolute', left: `${layerWidth - 110}px`, top: `${layerHeight / 2 - 60}px`, transform: 'translateX(-50%)',
               background: 'rgba(255,0,0,0.2)', padding: '4px 8px', borderRadius: '4px', border: '1px solid #ff4444',
               color: '#ff4444', fontSize: '12px', fontWeight: 'bold'
             }}>
