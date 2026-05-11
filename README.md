@@ -1,73 +1,44 @@
-# React + TypeScript + Vite
+# TinyNet: Visual Neural Network Playground
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TinyNet is an interactive, educational web application that lets you visualize and experiment with a neural network built entirely from scratch. No external machine learning libraries (like TensorFlow or PyTorch) are used. The core math, forward propagation, and backpropagation algorithms are implemented in plain TypeScript.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **From-Scratch Implementation:** See how the math works under the hood. The core neural network engine (`src/nn`) is written in Vanilla TypeScript.
+- **Real-Time Visualization:** Watch the network learn in real-time. Nodes light up based on activation levels, and error graphs update dynamically.
+- **Interactive Training:** Control the learning rate, step through individual training iterations, or train continuously over multiple epochs.
+- **Decision Boundaries:** Train the network on classic 2D datasets (like XOR or circular data) and watch the decision boundary evolve as the network learns to categorize points.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Core Logic:** Vanilla TypeScript
+- **Frontend:** React + Vite
+- **Styling:** Vanilla CSS with modern aesthetics (glassmorphism, dark mode)
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+To run this project locally, follow these steps:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1.  **Clone the repository** (if you haven't already).
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+3.  **Start the development server:**
+    ```bash
+    npm run dev
+    ```
+4.  Open your browser and navigate to the local server URL provided in the terminal (usually `http://localhost:5173`).
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Implementation Journey
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+The development of TinyNet follows a step-by-step approach to understanding neural networks:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1.  **The Single Neuron (Perceptron):** Understanding inputs, weights, bias, and activation functions.
+2.  **Forward Propagation:** Connecting neurons into layers and computing outputs.
+3.  **Loss Function:** Measuring the network's error (e.g., Mean Squared Error).
+4.  **Backpropagation:** Computing gradients using the chain rule to understand how to adjust weights.
+5.  **Gradient Descent:** Updating weights to minimize the loss.
+6.  **Real-world Problems:** Applying the network to 2D datasets and visualizing decision boundaries.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+For a more detailed breakdown of the development plan, check out [`PLAN.md`](./PLAN.md).
