@@ -11,7 +11,7 @@ export class Layer {
     return this.neurons.map(neuron => neuron.forward(inputs).output);
   }
 
-  // Step 5: Backprop for the Output Layer
+  // Step 4: Backprop for the Output Layer
   backwardOutputLayer(targets: number[]) {
     for (let i = 0; i < this.neurons.length; i++) {
       const neuron = this.neurons[i];
@@ -21,7 +21,7 @@ export class Layer {
     }
   }
 
-  // Step 5: Backprop for Hidden Layers
+  // Step 4: Backprop for Hidden Layers
   backwardHiddenLayer(nextLayer: Layer) {
     for (let i = 0; i < this.neurons.length; i++) {
       const neuron = this.neurons[i];
@@ -34,7 +34,7 @@ export class Layer {
     }
   }
 
-  // Step 6: Apply gradients
+  // Step 5: Apply gradients
   updateWeights(learningRate: number) {
     for (const neuron of this.neurons) {
       neuron.updateWeights(learningRate);
@@ -85,7 +85,7 @@ export class Network {
     }
   }
   
-  // Step 6: Update all weights using learning rate
+  // Step 5: Update all weights using learning rate
   updateWeights(learningRate: number) {
     for (const layer of this.layers) {
       layer.updateWeights(learningRate);

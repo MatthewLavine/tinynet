@@ -149,7 +149,7 @@ export default function CapacityVisualizer({ learningRate, onLossChange, onEpoch
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '16px', padding: '16px' }}>
       <h2 style={{ color: '#ff00ff', marginBottom: '-8px' }}>
-        Step 8: Network Capacity
+        Step 7: Network Capacity
       </h2>
       <p style={{ color: 'var(--text-secondary)', textAlign: 'center', maxWidth: '600px' }}>
         Try training the network with different architectures! Notice how the <strong>[2, 1]</strong> network completely fails on complex datasets because it lacks hidden layers.

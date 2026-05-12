@@ -72,7 +72,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
     }
     setEpoch(e => e + 5);
 
-    // Early stopping for Step 6: Stop when it hits a very low error
+    // Early stopping for Step 5: Stop when it hits a very low error
     if (currentLoss < 0.001) {
       setIsTraining(false);
       return;
@@ -100,7 +100,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
   architecture.forEach((layerSize, layerIdx) => {
     const layerPositions = [];
     const paddingX = 40;
-    const effectiveWidth = step >= 4 ? layerWidth - 120 : layerWidth;
+    const effectiveWidth = step >= 3 ? layerWidth - 120 : layerWidth;
     const actualWidth = effectiveWidth - paddingX * 2;
     const x = paddingX + (layerIdx * (actualWidth / (architecture.length - 1)));
     
@@ -124,17 +124,17 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: '24px', padding: '16px' }}>
-      <h2 style={{ color: step >= 6 ? '#00f0ff' : (step >= 5 ? '#facc15' : (step >= 4 ? '#ff4444' : 'var(--accent-primary)')), marginBottom: '-8px', transition: 'color 0.3s ease' }}>
-        {step === 3 && "Forward Propagation"}
-        {step === 4 && "The Loss Function (Error)"}
-        {step === 5 && "Backpropagation (Gradients)"}
-        {step >= 6 && "Gradient Descent (Learning)"}
+      <h2 style={{ color: step >= 5 ? '#00f0ff' : (step >= 4 ? '#facc15' : (step >= 3 ? '#ff4444' : 'var(--accent-primary)')), marginBottom: '-8px', transition: 'color 0.3s ease' }}>
+        {step === 2 && "Forward Propagation"}
+        {step === 3 && "The Loss Function (Error)"}
+        {step === 4 && "Backpropagation (Gradients)"}
+        {step >= 5 && "Gradient Descent (Learning)"}
       </h2>
       <p style={{ color: 'var(--text-secondary)', textAlign: 'center', maxWidth: '600px', minHeight: '40px' }}>
-        {step === 3 && "Adjust the inputs below. The network performs calculations to feed the signal forward."}
-        {step === 4 && "The Target is introduced. The Loss function measures how wrong the Network is."}
-        {step === 5 && "Click Backpropagate to push the Error backward through the network to see which connections need to be changed."}
-        {step >= 6 && "Now we use those gradients to Update the Weights! Click 'Train' to loop the Forward->Backward->Update process and watch it learn."}
+        {step === 2 && "Adjust the inputs below. The network performs calculations to feed the signal forward."}
+        {step === 3 && "The Target is introduced. The Loss function measures how wrong the Network is."}
+        {step === 4 && "Click Backpropagate to push the Error backward through the network to see which connections need to be changed."}
+        {step >= 5 && "Now we use those gradients to Update the Weights! Click 'Train' to loop the Forward->Backward->Update process and watch it learn."}
       </p>
 
       {/* Input Controls & Actions */}
@@ -158,7 +158,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
           ))}
         </div>
 
-        {step >= 4 && (
+        {step >= 3 && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'rgba(255,0,0,0.1)', padding: '12px 24px', borderRadius: '12px', border: '1px solid rgba(255,0,0,0.3)' }}>
             <span style={{ fontSize: '12px', color: '#ff4444' }}>Target</span>
             <input 
@@ -171,7 +171,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
           </div>
         )}
 
-        {step === 5 && (
+        {step === 4 && (
           <button 
             className="btn-primary" 
             style={{ padding: '16px 24px', background: 'linear-gradient(135deg, #facc15, #ff8c00)', color: '#000', fontSize: '16px', fontWeight: 'bold', border: 'none', borderRadius: '12px', boxShadow: '0 0 20px rgba(250, 204, 21, 0.4)' }}
@@ -181,7 +181,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
           </button>
         )}
 
-        {step >= 6 && (
+        {step >= 5 && (
           <div style={{ display: 'flex', gap: '12px' }}>
             <button 
               className="btn-primary" 
@@ -244,7 +244,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
             });
           })}
           
-          {step >= 4 && (
+          {step >= 3 && (
              <line 
                x1={nodePositions[architecture.length - 1][0].x + 18} 
                y1={nodePositions[architecture.length - 1][0].y}
@@ -291,7 +291,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
           })
         ))}
 
-        {step >= 4 && (
+        {step >= 3 && (
           <>
             <div style={{
               position: 'absolute', left: `${layerWidth - 60}px`, top: `${layerHeight / 2}px`, transform: 'translate(-50%, -50%)',

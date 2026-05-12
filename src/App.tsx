@@ -8,7 +8,7 @@ import CapacityVisualizer from './components/CapacityVisualizer';
 function App() {
   const [learningRate, setLearningRate] = useState(0.05);
   const [epochs, setEpochs] = useState(0);
-  const [currentStep, setCurrentStep] = useState(8); // Default to latest step
+  const [currentStep, setCurrentStep] = useState(1); // Default to first step
   const [currentLoss, setCurrentLoss] = useState(0);
   const [dynamicArch, setDynamicArch] = useState<number[]>([2, 8, 8, 1]);
 
@@ -29,13 +29,13 @@ function App() {
           <h1 className="logo-text">TinyNet Studio</h1>
         </div>
         <div className="header-controls">
-           <button style={getButtonStyle(2, ['var(--accent-primary)', '#0077ff'])} onClick={() => setCurrentStep(2)}>Step 2: Neuron</button>
-           <button style={getButtonStyle(3, ['var(--accent-primary)', '#0077ff'])} onClick={() => setCurrentStep(3)}>Step 3: Network</button>
-           <button style={getButtonStyle(4, ['#ff4444', '#ff0077'])} onClick={() => setCurrentStep(4)}>Step 4: Loss</button>
-           <button style={getButtonStyle(5, ['#facc15', '#ff8c00'])} onClick={() => setCurrentStep(5)}>Step 5: Backprop</button>
-           <button style={getButtonStyle(6, ['var(--accent-primary)', 'var(--accent-secondary)'])} onClick={() => setCurrentStep(6)}>Step 6: Learn</button>
-           <button style={getButtonStyle(7, ['#00ffaa', '#00aaee'])} onClick={() => setCurrentStep(7)}>Step 7: Problem</button>
-           <button style={getButtonStyle(8, ['#ff00ff', '#aa00ff'])} onClick={() => setCurrentStep(8)}>Step 8: Capacity</button>
+           <button style={getButtonStyle(1, ['var(--accent-primary)', '#0077ff'])} onClick={() => setCurrentStep(1)}>Step 1: Neuron</button>
+           <button style={getButtonStyle(2, ['var(--accent-primary)', '#0077ff'])} onClick={() => setCurrentStep(2)}>Step 2: Network</button>
+           <button style={getButtonStyle(3, ['#ff4444', '#ff0077'])} onClick={() => setCurrentStep(3)}>Step 3: Loss</button>
+           <button style={getButtonStyle(4, ['#facc15', '#ff8c00'])} onClick={() => setCurrentStep(4)}>Step 4: Backprop</button>
+           <button style={getButtonStyle(5, ['var(--accent-primary)', 'var(--accent-secondary)'])} onClick={() => setCurrentStep(5)}>Step 5: Learn</button>
+           <button style={getButtonStyle(6, ['#00ffaa', '#00aaee'])} onClick={() => setCurrentStep(6)}>Step 6: Problem</button>
+           <button style={getButtonStyle(7, ['#ff00ff', '#aa00ff'])} onClick={() => setCurrentStep(7)}>Step 7: Capacity</button>
         </div>
       </header>
 
@@ -43,13 +43,13 @@ function App() {
         <aside className="sidebar glass-panel">
           <h2 className="panel-title">Network Architecture</h2>
           <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.6' }}>
-            {currentStep < 7 ? (
+            {currentStep < 6 ? (
               <>
                 <p><strong>Input Layer:</strong> 2 Neurons</p>
                 <p><strong>Hidden Layers:</strong> [4, 4]</p>
                 <p><strong>Output Layer:</strong> 1 Neuron</p>
               </>
-            ) : currentStep === 7 ? (
+            ) : currentStep === 6 ? (
               <>
                 <p><strong>Input Layer:</strong> 2 (X, Y coords)</p>
                 <p><strong>Hidden Layers:</strong> [8, 8]</p>
@@ -83,10 +83,10 @@ function App() {
         </aside>
 
         <section className="canvas-container glass-panel">
-          {currentStep === 2 && <PerceptronVisualizer />}
-          {currentStep >= 3 && currentStep <= 6 && <NetworkVisualizer step={currentStep} learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
-          {currentStep === 7 && <DatasetVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
-          {currentStep === 8 && <CapacityVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} onArchChange={setDynamicArch} />}
+          {currentStep === 1 && <PerceptronVisualizer />}
+          {currentStep >= 2 && currentStep <= 5 && <NetworkVisualizer step={currentStep} learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
+          {currentStep === 6 && <DatasetVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
+          {currentStep === 7 && <CapacityVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} onArchChange={setDynamicArch} />}
         </section>
 
         <aside className="inspector-panel glass-panel">
@@ -94,12 +94,12 @@ function App() {
           <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
             <p style={{ marginBottom: '16px' }}>View real-time network states here.</p>
             <div style={{ padding: '16px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
-              {currentStep === 8 ? (
+              {currentStep === 7 ? (
                 <p>Watch how a network with no hidden layers gets permanently stuck trying to separate a circle with a single straight line!</p>
-              ) : currentStep === 7 ? (
-                <p>In Step 7, the network tries to completely separate the Cyan dots from the Purple dots by bending the space between them.</p>
+              ) : currentStep === 6 ? (
+                <p>In Step 6, the network tries to completely separate the Cyan dots from the Purple dots by bending the space between them.</p>
               ) : (
-                <p>Observe the Network adjust its weights to minimize the Error (Loss) in Step 6.</p>
+                <p>Observe the Network adjust its weights to minimize the Error (Loss) in Step 5.</p>
               )}
             </div>
           </div>
@@ -113,8 +113,8 @@ function App() {
               </div>
               <div style={{ padding: '16px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
                 <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Loss (MSE)</p>
-                <p style={{ fontSize: '24px', fontWeight: 'bold', color: currentStep >= 4 ? '#ff4444' : 'var(--accent-secondary)' }}>
-                  {currentStep >= 4 ? currentLoss.toFixed(4) : "0.0000"}
+                <p style={{ fontSize: '24px', fontWeight: 'bold', color: currentStep >= 3 ? '#ff4444' : 'var(--accent-secondary)' }}>
+                  {currentStep >= 3 ? currentLoss.toFixed(4) : "0.0000"}
                 </p>
               </div>
             </div>
