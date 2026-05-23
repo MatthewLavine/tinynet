@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import PerceptronVisualizer from './components/PerceptronVisualizer';
 import NetworkVisualizer from './components/NetworkVisualizer';
@@ -8,9 +8,40 @@ import CapacityVisualizer from './components/CapacityVisualizer';
 function App() {
   const [learningRate, setLearningRate] = useState(0.05);
   const [epochs, setEpochs] = useState(0);
-  const [currentStep, setCurrentStep] = useState(1); // Default to first step
+  const [currentStep, setCurrentStep] = useState<number>(() => {
+    const hash = window.location.hash;
+    const match = hash.match(/^#step-(\d)$/);
+    if (match) {
+      const step = parseInt(match[1], 10);
+      if (step >= 1 && step <= 7) return step;
+    }
+    return 1;
+  });
   const [currentLoss, setCurrentLoss] = useState(0);
   const [dynamicArch, setDynamicArch] = useState<number[]>([2, 8, 8, 1]);
+
+  // Sync hash change to step state (supports back/forward browser navigation)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      const match = hash.match(/^#step-(\d)$/);
+      if (match) {
+        const step = parseInt(match[1], 10);
+        if (step >= 1 && step <= 7) {
+          setCurrentStep(step);
+        }
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Sync step state to URL hash
+  useEffect(() => {
+    if (window.location.hash !== `#step-${currentStep}`) {
+      window.location.hash = `#step-${currentStep}`;
+    }
+  }, [currentStep]);
 
   const getButtonStyle = (step: number, colors: [string, string]) => ({
     background: currentStep === step ? `linear-gradient(135deg, ${colors[0]}, ${colors[1]})` : 'rgba(255,255,255,0.05)',
