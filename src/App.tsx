@@ -19,6 +19,7 @@ function App() {
   });
   const [currentLoss, setCurrentLoss] = useState(0);
   const [dynamicArch, setDynamicArch] = useState<number[]>([2, 8, 8, 1]);
+  const [targetMse, setTargetMse] = useState(0.01);
 
   // Sync hash change to step state (supports back/forward browser navigation)
   useEffect(() => {
@@ -97,7 +98,7 @@ function App() {
 
           <div style={{ marginTop: '32px' }}>
             <h2 className="panel-title">Training Parameters</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '12px' }}>
               <div>
                 <label style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                   <span>Learning Rate</span>
@@ -109,15 +110,26 @@ function App() {
                   style={{ width: '100%', accentColor: 'var(--accent-primary)' }}
                 />
               </div>
+              <div>
+                <label style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                  <span>Target MSE</span>
+                  <span>{targetMse}</span>
+                </label>
+                <input 
+                  type="range" min="0.0001" max="0.1" step="0.0001" 
+                  value={targetMse} onChange={(e) => setTargetMse(parseFloat(e.target.value))}
+                  style={{ width: '100%', accentColor: 'var(--accent-primary)' }}
+                />
+              </div>
             </div>
           </div>
         </aside>
 
         <section className="canvas-container glass-panel">
           {currentStep === 1 && <PerceptronVisualizer />}
-          {currentStep >= 2 && currentStep <= 5 && <NetworkVisualizer step={currentStep} learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
-          {currentStep === 6 && <DatasetVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
-          {currentStep === 7 && <CapacityVisualizer learningRate={learningRate} onLossChange={setCurrentLoss} onEpochChange={setEpochs} onArchChange={setDynamicArch} />}
+          {currentStep >= 2 && currentStep <= 5 && <NetworkVisualizer step={currentStep} learningRate={learningRate} targetMse={targetMse} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
+          {currentStep === 6 && <DatasetVisualizer learningRate={learningRate} targetMse={targetMse} onLossChange={setCurrentLoss} onEpochChange={setEpochs} />}
+          {currentStep === 7 && <CapacityVisualizer learningRate={learningRate} targetMse={targetMse} onLossChange={setCurrentLoss} onEpochChange={setEpochs} onArchChange={setDynamicArch} />}
         </section>
 
         <aside className="inspector-panel glass-panel">

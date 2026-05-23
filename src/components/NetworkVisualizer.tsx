@@ -5,11 +5,12 @@ import { meanSquaredError } from '../nn/Loss';
 interface Props {
   step: number;
   learningRate: number;
+  targetMse: number;
   onLossChange?: (loss: number) => void;
   onEpochChange?: (epoch: number) => void;
 }
 
-export default function NetworkVisualizer({ step, learningRate, onLossChange, onEpochChange }: Props) {
+export default function NetworkVisualizer({ step, learningRate, targetMse, onLossChange, onEpochChange }: Props) {
   const architecture = [2, 4, 4, 1];
   const network = useMemo(() => new Network(architecture), []);
   
@@ -73,7 +74,7 @@ export default function NetworkVisualizer({ step, learningRate, onLossChange, on
     setEpoch(e => e + 5);
 
     // Early stopping for Step 5: Stop when it hits a very low error
-    if (currentLoss < 0.001) {
+    if (currentLoss < targetMse) {
       setIsTraining(false);
       return;
     }

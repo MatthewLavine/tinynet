@@ -6,11 +6,12 @@ import NetworkGraph from './NetworkGraph';
 
 interface Props {
   learningRate: number;
+  targetMse: number;
   onLossChange?: (loss: number) => void;
   onEpochChange?: (epoch: number) => void;
 }
 
-export default function DatasetVisualizer({ learningRate, onLossChange, onEpochChange }: Props) {
+export default function DatasetVisualizer({ learningRate, targetMse, onLossChange, onEpochChange }: Props) {
   const [datasetType, setDatasetType] = useState<'circle' | 'xor'>('circle');
   const [dataset, setDataset] = useState<DataPoint[]>([]);
   const [isTraining, setIsTraining] = useState(false);
@@ -117,7 +118,7 @@ export default function DatasetVisualizer({ learningRate, onLossChange, onEpochC
     drawBoundary();
 
     // Early stopping: If the network solves the problem (Loss gets very low), stop training!
-    if (currentLoss < 0.01) {
+    if (currentLoss < targetMse) {
       setIsTraining(false);
       return; // Break the loop
     }

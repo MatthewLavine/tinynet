@@ -6,6 +6,7 @@ import NetworkGraph from './NetworkGraph';
 
 interface Props {
   learningRate: number;
+  targetMse: number;
   onLossChange?: (loss: number) => void;
   onEpochChange?: (epoch: number) => void;
   onArchChange?: (arch: number[]) => void;
@@ -17,7 +18,7 @@ const archOptions = [
   { label: 'Deep [2, 8, 8, 1]', value: [2, 8, 8, 1], desc: "Two hidden layers. Can draw complex, organic curves." }
 ];
 
-export default function CapacityVisualizer({ learningRate, onLossChange, onEpochChange, onArchChange }: Props) {
+export default function CapacityVisualizer({ learningRate, targetMse, onLossChange, onEpochChange, onArchChange }: Props) {
   const [datasetType, setDatasetType] = useState<'circle' | 'xor'>('circle');
   const [dataset, setDataset] = useState<DataPoint[]>([]);
   const [isTraining, setIsTraining] = useState(false);
@@ -129,7 +130,7 @@ export default function CapacityVisualizer({ learningRate, onLossChange, onEpoch
     
     drawBoundary();
 
-    if (currentLoss < 0.01) {
+    if (currentLoss < targetMse) {
       setIsTraining(false);
       return;
     }
