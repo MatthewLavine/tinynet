@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { Network } from '../nn/Network';
 import { generateCircleData, generateXORData, type DataPoint } from '../nn/Dataset';
 import { meanSquaredError } from '../nn/Loss';
+import NetworkGraph from './NetworkGraph';
 
 interface Props {
   learningRate: number;
@@ -21,6 +22,7 @@ export default function CapacityVisualizer({ learningRate, onLossChange, onEpoch
   const [dataset, setDataset] = useState<DataPoint[]>([]);
   const [isTraining, setIsTraining] = useState(false);
   const [epochs, setEpochs] = useState(0);
+  const [hoverInputs, setHoverInputs] = useState<number[]>([0.5, 0.5]);
 
   const [archIdx, setArchIdx] = useState(0);
 
@@ -216,9 +218,21 @@ export default function CapacityVisualizer({ learningRate, onLossChange, onEpoch
           ref={canvasRef} 
           width={400} 
           height={400} 
-          style={{ background: '#000', display: 'block' }}
+          style={{ background: '#000', display: 'block', cursor: 'crosshair' }}
+          onMouseMove={(e) => {
+            const canvas = canvasRef.current;
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            const y = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
+            setHoverInputs([x, y]);
+          }}
+          onMouseLeave={() => {
+            setHoverInputs([0.5, 0.5]);
+          }}
         />
       </div>
+      <NetworkGraph network={network} inputs={hoverInputs} />
     </div>
   );
 }
